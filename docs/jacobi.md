@@ -18,3 +18,9 @@ Asserts are still useful for:
 - Documenting: assert 2==2, "2 must equal 2"
 - Debugging: assert 2==2
 - Testing: def test_two: assert 2==2
+
+### Decorators
+
+Two decorators have been defined which time a given function once or provide more detailed statistics over many runs of a given function.
+
+These decorators use the functools decorator to preserve information about the function, i.e the function `__name__` and object info.

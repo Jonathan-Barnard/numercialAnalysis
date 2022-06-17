@@ -12,6 +12,5 @@ b = [6., 25., -11., 15.]
 x = [0, 0, 0, 0]
 
 if __name__ == "__main__":
-    algorithm = Jacobi(A, b, x, 10)
-    algorithm.jacobiMethodSlow()
-    print(algorithm.x)
+    algorithm = Jacobi(A, b, x)
+    solution = algorithm.jacobiMethodSlow()

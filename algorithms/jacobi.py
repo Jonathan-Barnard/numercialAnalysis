@@ -1,5 +1,6 @@
-from utils.decorators import _timer
+from utils.decorators import _timerStatistics
 from utils.logging import logger
+
 
 class Jacobi:
     """	
@@ -37,7 +38,7 @@ class Jacobi:
         )
         return InputMatrix + Vector
     
-    @_timer
+    @_timerStatistics
     def jacobiMethodSlow(self):
         """	
         Description
