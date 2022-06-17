@@ -1,42 +1,20 @@
-import logging
-
-logging.basicConfig(
-    format="%(asctime)s: %(message)s",
-    level=logging.INFO,
-    datefmt="%H:%M:%S"
-)
-
-
-A = [
-    [10., -1., 2., 0.],
-    [-1., 11., -1., 3.],
-    [2., -1., 10., -1.],
-    [0.0, 3., -1., 8.]
-]
-# initialize the RHS vector
-b = [6., 25., -11., 15.]
-
-x = [0, 0, 0, 0]
-
+from utils.decorators import _timer
+from utils.logging import logger
 
 class Jacobi:
-    """
-    A class implementing the jacobi method
-    
-    Additionally this displays a managed attribute self.maxiter.
-    Managed attributes can be used for:
-        - Data validation from user or other sources
-        - Read only, read-write or write only attrs
-        - Computed attributes (lazy compute of value)
-        - Auto formatting
+    """	
+    Description
+        A class implementing the jacobi method
         
-    They perform better than asserts as you can turn asserts off in
-    python optimised mode by setting __debug__ to false. During this
-    asserts are ignored and code can perform not as expected.
-    Asserts are still useful for:
-        - Documenting: assert 2==2, "2 must equal 2"
-        - Debugging: assert 2==2
-        - Testing: def test_two: assert 2==2
+    Attributes
+        A -> list[list(float)]: Matrix
+        b -> list(float): Vector
+        x -> list(float): Solution vector
+        _maxiter -> int: Maximum allowable iterations
+        
+    Methods
+        jacobiMethodSlow: Computes system of equation using
+            pythonic style jacobi method.
     """
     
     def __init__(self, A, b, x, maxiter = 1000) -> None:
@@ -59,14 +37,36 @@ class Jacobi:
         )
         return InputMatrix + Vector
     
+    @_timer
     def jacobiMethodSlow(self):
-        assert self.MAXITER >= 0, "Iterations must be above zero"
-        pass
+        """	
+        Description
+           	Computes system of equation using
+            pythonic style jacobi method
+        Returns
+                list(float): Solution vector
+        """
+        iter = 0
+        
+        while iter < self._maxiter:
+            xOld = self.x.copy()
+            for i in range(len(self.x)):
+                outerSum = 0
+                for j in range(len(self.x)):
+                    if j != i:
+                        outerSum += self.A[i][j] * self.x[j]
+                self.x[i] = 1/self.A[i][i] * (self.b[i] - outerSum)
+                
+            criteria = all([abs(n - m) <= 1e-10 for n, m in zip(self.x, xOld)])
+            if criteria:
+                break
+            iter+=1
+        return self.x
     
     @property
     def maxiter(self):
         """Doc string in getter: maxiter property"""
-        logging.info(f"Accessing maxiter, value: {self._maxiter}")
+        logger.info(f"Accessing maxiter, value: {self._maxiter}")
         return self._maxiter
     
     @maxiter.setter
@@ -75,11 +75,5 @@ class Jacobi:
             raise ValueError("Iterations must be above zero")
         if not isinstance(value, int):
             raise TypeError("MAXITER must be an integer")
-        logging.info(f"Mutating maxter: {value}")
+        logger.info(f"Mutating maxiter to: {value}")
         self._maxiter = value
-    
-
-algorithm = Jacobi(A, b, x, 10)
-print(__debug__)
-algorithm.maxiter = 5
-algorithm.maxiter
