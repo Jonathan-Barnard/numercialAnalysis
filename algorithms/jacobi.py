@@ -2,8 +2,18 @@ import scipy
 import scipy.linalg
 import numpy as np
 
+import yaml
+import logging
+import logging.config
+
+with open('utils/logging.yaml') as f:
+    config = yaml.safe_load(f.read())
+    logging.config.dictConfig(config)
+
+logger = logging.getLogger(__name__)
+logger.debug('This is a debug')
+
 from utils.decorators import _timerStatistics
-from utils.logging import logger
 
 
 class Jacobi:
@@ -26,7 +36,7 @@ class Jacobi:
         self.A = A
         self.b = b
         self.x = x
-        self._maxiter = maxiter
+        self.maxiter = maxiter
         
         self.Anp = np.array(A, ndmin=2, dtype=np.float64)
         self.bnp = np.array(b, ndmin=2, dtype=np.float64).T
