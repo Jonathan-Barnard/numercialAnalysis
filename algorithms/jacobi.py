@@ -6,14 +6,11 @@ import yaml
 import logging
 import logging.config
 
+
 with open('utils/logging.yaml') as f:
     config = yaml.safe_load(f.read())
     logging.config.dictConfig(config)
-
 logger = logging.getLogger(__name__)
-logger.debug('This is a debug')
-
-from utils.decorators import _timerStatistics
 
 
 class Jacobi:
@@ -42,10 +39,12 @@ class Jacobi:
         self.bnp = np.array(b, ndmin=2, dtype=np.float64).T
         self.xnp = np.array(x, ndmin=2, dtype=np.float64).T
         
+
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}('
-            f'{self.A!r}, {self.b!r})')
+            f'{self.Anp.shape!r}, {self.bnp.shape!r})')
     
+
     def __str__(self) -> str:
         InputMatrix = 'Input matrix: \n'+'\n'.join(
             ['  '.join(['{:4}'.format(item) for item in row]) 
@@ -56,8 +55,8 @@ class Jacobi:
         )
         return InputMatrix + Vector
     
-    @_timerStatistics
-    def jacobiLoop(self):
+
+    def loop(self):
         """	
         Description
            	Computes system of equation using
@@ -84,8 +83,8 @@ class Jacobi:
                 break
         return x
     
-    @_timerStatistics
-    def jacobiVectorised(self):
+        
+    def vectorised(self):
         iter = 0
         criteria = False
         xnp = self.xnp
@@ -106,17 +105,19 @@ class Jacobi:
                 break
         return xnp
     
+
     @property
     def maxiter(self):
         """Doc string in getter: maxiter property"""
-        logger.info(f"Accessing maxiter, value: {self._maxiter}")
+        logger.debug(f"Accessing maxiter, value: {self._maxiter}")
         return self._maxiter
     
+
     @maxiter.setter
     def maxiter(self, value):
         if value <= 0:
             raise ValueError("Iterations must be above zero")
         if not isinstance(value, int):
             raise TypeError("MAXITER must be an integer")
-        logger.info(f"Mutating maxiter to: {value}")
+        logger.debug(f"Mutating maxiter to: {value}")
         self._maxiter = value
